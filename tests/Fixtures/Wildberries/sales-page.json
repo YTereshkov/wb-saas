@@ -1,0 +1,20 @@
+[
+    {
+        "date": "2026-08-21T09:00:00",
+        "lastChangeDate": "2026-08-21T09:10:00",
+        "supplierArticle": "NH-PLAID-01",
+        "nmId": 70010001,
+        "finishedPrice": 2499.50,
+        "saleID": "S-fixture-001",
+        "srid": "fixture-order-001"
+    },
+    {
+        "date": "2026-08-22T10:00:00",
+        "lastChangeDate": "2026-08-22T10:10:00",
+        "supplierArticle": "NH-PLAID-01",
+        "nmId": 70010001,
+        "finishedPrice": -2499.50,
+        "saleID": "R-fixture-001",
+        "srid": "fixture-order-001"
+    }
+]

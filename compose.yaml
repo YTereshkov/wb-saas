@@ -1,0 +1,116 @@
+name: sellerscope
+
+x-app-environment: &app-environment
+    APP_ENV: local
+    APP_DEBUG: "true"
+    APP_URL: http://localhost:${APP_PORT:-8000}
+    LOG_CHANNEL: stderr
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: "5432"
+    DB_DATABASE: ${DB_DATABASE:-sellerscope}
+    DB_USERNAME: ${DB_USERNAME:-sellerscope}
+    DB_PASSWORD: ${DB_PASSWORD:-sellerscope}
+    CACHE_STORE: redis
+    QUEUE_CONNECTION: redis
+    REDIS_QUEUE_RETRY_AFTER: "960"
+    REDIS_CLIENT: phpredis
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+
+x-app-service: &app-service
+    build:
+        context: .
+        target: runtime
+        args:
+            APP_UID: ${APP_UID:-1000}
+            APP_GID: ${APP_GID:-1000}
+    image: sellerscope/app:local
+    init: true
+    env_file:
+        - .env
+    environment: *app-environment
+    volumes:
+        - ./.env:/var/www/html/.env
+    restart: unless-stopped
+
+services:
+    app:
+        <<: *app-service
+        command:
+            - sh
+            - -c
+            - php artisan migrate --force && exec php artisan serve --host=0.0.0.0 --port=8000
+        ports:
+            - "${APP_PORT:-8000}:8000"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://127.0.0.1:8000/"]
+            interval: 5s
+            timeout: 3s
+            retries: 20
+            start_period: 15s
+
+    queue:
+        <<: *app-service
+        command: ["php", "artisan", "horizon"]
+        depends_on:
+            app:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "php", "artisan", "horizon:status"]
+            interval: 15s
+            timeout: 10s
+            retries: 3
+            start_period: 10s
+        stop_grace_period: 960s
+
+    scheduler:
+        <<: *app-service
+        command: ["php", "artisan", "schedule:work", "--no-interaction"]
+        depends_on:
+            app:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD", "php", "artisan", "schedule:list"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 10s
+
+    postgres:
+        image: postgres:17.7-alpine
+        environment:
+            POSTGRES_DB: ${DB_DATABASE:-sellerscope}
+            POSTGRES_USER: ${DB_USERNAME:-sellerscope}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-sellerscope}
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-sellerscope} -d ${DB_DATABASE:-sellerscope}"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 10s
+        restart: unless-stopped
+
+    redis:
+        image: redis:7.4.10-alpine
+        command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
+        volumes:
+            - redis-data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 3s
+            retries: 10
+            start_period: 5s
+        restart: unless-stopped
+
+volumes:
+    postgres-data:
+    redis-data:

@@ -1,0 +1,36 @@
+{
+    "data": {
+        "items": [
+            {
+                "nmId": 70010001,
+                "chrtId": 900001,
+                "warehouseId": 507,
+                "warehouseName": "Коледино",
+                "regionName": "Центральный",
+                "quantity": 43,
+                "inWayToClient": 14,
+                "inWayFromClient": 11
+            },
+            {
+                "nmId": 70010001,
+                "chrtId": 900002,
+                "warehouseId": 507,
+                "warehouseName": "Коледино",
+                "regionName": "Центральный",
+                "quantity": 7,
+                "inWayToClient": 1,
+                "inWayFromClient": 0
+            },
+            {
+                "nmId": 70010002,
+                "chrtId": 900003,
+                "warehouseId": 120762,
+                "warehouseName": "Казань",
+                "regionName": "Приволжский",
+                "quantity": 19,
+                "inWayToClient": 2,
+                "inWayFromClient": 1
+            }
+        ]
+    }
+}

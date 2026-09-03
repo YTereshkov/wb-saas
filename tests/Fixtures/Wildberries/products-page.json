@@ -1,0 +1,29 @@
+{
+    "cards": [
+        {
+            "nmID": 70010001,
+            "subjectID": 8126,
+            "subjectName": "Пледы",
+            "vendorCode": "NH-PLAID-01",
+            "brand": "Northern Home",
+            "title": "Плед хлопковый",
+            "updatedAt": "2026-08-20T10:15:30Z",
+            "photos": [{"big": "https://images.example.test/70010001.webp"}]
+        },
+        {
+            "nmID": 70010002,
+            "subjectID": 8127,
+            "subjectName": "Подушки декоративные",
+            "vendorCode": "NH-PILLOW-02",
+            "brand": "Northern Home",
+            "title": "Подушка декоративная",
+            "updatedAt": "2026-08-20T10:16:30Z",
+            "photos": []
+        }
+    ],
+    "cursor": {
+        "updatedAt": "2026-08-20T10:16:30Z",
+        "nmID": 70010002,
+        "total": 2
+    }
+}

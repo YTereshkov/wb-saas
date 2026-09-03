@@ -1,0 +1,22 @@
+[
+    {
+        "date": "2026-08-20T12:00:00",
+        "lastChangeDate": "2026-08-20T12:10:00",
+        "supplierArticle": "NH-PLAID-01",
+        "nmId": 70010001,
+        "finishedPrice": 2499.50,
+        "isCancel": false,
+        "cancelDate": "0001-01-01T00:00:00",
+        "srid": "fixture-order-001"
+    },
+    {
+        "date": "2026-08-20T12:01:00",
+        "lastChangeDate": "2026-08-20T12:11:00",
+        "supplierArticle": "NH-PILLOW-02",
+        "nmId": 70010002,
+        "finishedPrice": 1590,
+        "isCancel": true,
+        "cancelDate": "2026-08-20T12:15:00",
+        "srid": "fixture-order-002"
+    }
+]

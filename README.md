@@ -10,73 +10,75 @@ SellerScope — сервис аналитики для продавцов Wildbe
 что стоит проверить в первую очередь, а рекомендации по объёму поставки —
 подготовиться к пополнению склада.
 
-SellerScope работает с данными Wildberries через backend и показывает их
+SellerScope работает с данными Wildberries через серверную часть и показывает их
 в едином интерфейсе. В репозитории есть воспроизводимый демонстрационный кабинет
 для знакомства с сервисом без подключения реального аккаунта продавца.
 
 Проект построен на Laravel, Inertia.js, React и TypeScript.
 
-User documentation: [SellerScope user guide](docs/user-guide.md) (in Russian).
+Документация для пользователей: [руководство SellerScope](docs/user-guide.md).
 
-## Local development environment
+## Локальное окружение для разработки
 
-Requirements: Docker with Docker Compose.
+Требования: Docker с Docker Compose.
 
-1. Create the local environment file:
+1. Создайте локальный файл окружения:
 
     ```bash
     cp .env.example .env
     ```
 
-2. Build the application image:
+2. Соберите образ приложения:
 
     ```bash
     docker compose build
     ```
 
-3. Generate the local application key:
+3. Создайте локальный ключ приложения:
 
     ```bash
     docker compose run --rm app php artisan key:generate --force
     ```
 
-4. Set `HORIZON_ALLOWED_EMAILS` to the comma-separated accounts that may open
-   the internal queue dashboard, then start the application, PostgreSQL, Redis,
-   Horizon, and scheduler:
+4. В `HORIZON_ALLOWED_EMAILS` укажите через запятую адреса пользователей,
+   которым разрешён доступ к внутренней панели очередей. Затем запустите
+   приложение, PostgreSQL, Redis, Horizon и планировщик:
 
     ```bash
     docker compose up -d --wait
     ```
 
-5. Check service health and open the application:
+5. Проверьте работоспособность сервисов и откройте приложение:
 
     ```bash
     docker compose ps
     ```
 
-    The application is available at <http://localhost:8000> by default. Set
-    `APP_PORT` in `.env` to use another host port. The protected Horizon
-    dashboard is available at <http://localhost:8000/horizon>.
+    По умолчанию приложение доступно по адресу <http://localhost:8000>.
+    Чтобы использовать другой порт на основной машине, задайте `APP_PORT`
+    в `.env`. Защищённая панель Horizon доступна
+    по адресу <http://localhost:8000/horizon>.
 
-6. Prepare the deterministic demo cabinet:
+6. Подготовьте воспроизводимый демонстрационный кабинет:
 
     ```bash
     docker compose exec app php artisan db:seed --force
     ```
 
-    Sign in with `demo@sellerscope.local` and `SellerScopeDemo1!`. The seed is
-    repeatable and imports the canonical June/July 2026 demo dataset through the
-    same synchronization and aggregation pipeline used by the application.
+    Войдите с адресом `demo@sellerscope.local` и паролем `SellerScopeDemo1!`.
+    Заполнение демонстрационными данными можно повторять. Оно импортирует
+    эталонный набор за июнь и июль 2026 года через тот же процесс синхронизации
+    и агрегации, который использует приложение.
 
-The `app` service applies pending Laravel migrations before starting the local
-web server. PostgreSQL and Redis data are stored in named Docker volumes.
-Rebuild the application image after changing PHP or frontend source files:
+Сервис `app` применяет ожидающие миграции Laravel перед запуском локального
+веб-сервера. Данные PostgreSQL и Redis хранятся в именованных томах Docker.
+После изменения исходников PHP или клиентской части пересоберите образ приложения:
 
 ```bash
 docker compose up -d --build --wait
 ```
 
-Useful commands:
+Полезные команды:
 
 ```bash
 docker compose run --rm --no-deps --build app composer test
@@ -88,9 +90,10 @@ docker compose logs -f app queue scheduler
 docker compose down
 ```
 
-`docker compose down` keeps database and Redis volumes. Do not add `--volumes`
-unless local data removal is explicitly intended.
+Команда `docker compose down` сохраняет тома PostgreSQL и Redis.
+Не добавляйте `--volumes`, если не намерены удалить локальные данные.
 
-Redis can report that host-level `vm.overcommit_memory` is disabled. The
-containers remain usable for normal local development, but enabling that Linux
-setting is recommended before load testing or relying on Redis persistence.
+Redis может сообщать, что на основной машине отключён параметр
+`vm.overcommit_memory`. Для обычной локальной разработки контейнеры остаются
+работоспособными. Перед нагрузочным тестированием или использованием Redis
+с сохранением данных рекомендуется включить этот параметр Linux.
